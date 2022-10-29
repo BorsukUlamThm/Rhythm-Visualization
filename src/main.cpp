@@ -1,5 +1,6 @@
 #include <iostream>
 #include "model/Rythme.h"
+#include "view/Canvas.h"
 
 
 int main()
@@ -11,6 +12,8 @@ int main()
 	rythme.add_beat(2);
 	rythme.add_beat(4, true);
 
-	std::cout << rythme << std::endl;
+	Canvas canvas;
+	canvas.display_rythme(rythme);
+
 	return 0;
 }

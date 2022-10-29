@@ -15,5 +15,9 @@ set(exe_name rythme-visualization)
 add_executable(${exe_name}
         src/main.cpp
         src/model/Rythme.cpp
-        src/model/Rythme.h)
+        src/model/Rythme.h
+        src/view/Canvas.cpp
+        src/view/Canvas.h)
+
+target_link_libraries(${exe_name} -lsfml-graphics -lsfml-window -lsfml-system)
 set_target_properties(${exe_name} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${bin})
