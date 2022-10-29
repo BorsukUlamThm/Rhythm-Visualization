@@ -12,5 +12,8 @@ file(MAKE_DIRECTORY ${data})
 
 # Executable
 set(exe_name rythme-visualization)
-add_executable(${exe_name} src/main.cpp)
+add_executable(${exe_name}
+        src/main.cpp
+        src/model/Rythme.cpp
+        src/model/Rythme.h)
 set_target_properties(${exe_name} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${bin})
