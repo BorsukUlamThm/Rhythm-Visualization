@@ -1,4 +1,4 @@
-#include "Rythme.h"
+#include "Rhythm.h"
 
 
 Beat::Beat(double length,
@@ -7,27 +7,27 @@ Beat::Beat(double length,
 		accented(accented)
 {}
 
-Rythme::Rythme(double bpm) :
+Rhythm::Rhythm(double bpm) :
 		bpm(bpm)
 {}
 
-void Rythme::add_beat(const Beat& beat)
+void Rhythm::add_beat(const Beat& beat)
 {
 	beats.push_back(beat);
 }
 
-void Rythme::add_beat(double length,
-					  bool accented)
+void Rhythm::add_beat(double length,
+                      bool accented)
 {
 	beats.emplace_back(length, accented);
 }
 
-const Beat& Rythme::operator[](unsigned i) const
+const Beat& Rhythm::operator[](unsigned i) const
 {
 	return beats[i];
 }
 
-Beat& Rythme::operator[](unsigned i)
+Beat& Rhythm::operator[](unsigned i)
 {
 	return beats[i];
 }
@@ -37,14 +37,18 @@ std::ostream& operator<<(std::ostream& os,
 {
 	std::cout << beat.length
 			  << (beat.accented ? " (accented)" : "");
+
+    return os;
 }
 
 std::ostream& operator<<(std::ostream& os,
-						 const Rythme& rythme)
+						 const Rhythm& rythme)
 {
 	std::cout << "bpm : " << rythme.bpm << std::endl;
 	for(auto& beat : rythme.beats)
 	{
 		std::cout << beat << std::endl;
 	}
+
+    return os;
 }

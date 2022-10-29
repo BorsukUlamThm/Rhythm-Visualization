@@ -1,1 +1,1 @@
-# Rythme-Visualization
+# Rhythm-Visualization

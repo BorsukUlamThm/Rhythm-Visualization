@@ -1,5 +1,5 @@
-cmake_minimum_required(VERSION 3.23)
-project(Rythme-Visualization)
+cmake_minimum_required(VERSION 3.21)
+project(Rhythm-Visualization)
 set(CMAKE_CXX_STANDARD 14)
 
 
@@ -14,8 +14,8 @@ file(MAKE_DIRECTORY ${data})
 set(exe_name rythme-visualization)
 add_executable(${exe_name}
         src/main.cpp
-        src/model/Rythme.cpp
-        src/model/Rythme.h
+        src/model/Rhythm.cpp
+        src/model/Rhythm.h
         src/view/Canvas.cpp
         src/view/Canvas.h)
 

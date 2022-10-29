@@ -1,5 +1,5 @@
 #include <iostream>
-#include "model/Rythme.h"
+#include "model/Rhythm.h"
 #include "view/Canvas.h"
 
 
@@ -7,7 +7,7 @@ int main()
 {
 	Beat beat1(1);
 
-	Rythme rythme;
+	Rhythm rythme;
 	rythme.add_beat(beat1);
 	rythme.add_beat(2);
 	rythme.add_beat(4, true);

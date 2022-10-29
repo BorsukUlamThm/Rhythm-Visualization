@@ -1,5 +1,5 @@
-#ifndef RYTHME_VISUALIZATION_RYTHME_H
-#define RYTHME_VISUALIZATION_RYTHME_H
+#ifndef RYTHME_VISUALIZATION_RHYTHM_H
+#define RYTHME_VISUALIZATION_RHYTHM_H
 
 #include <vector>
 #include <iostream>
@@ -16,7 +16,7 @@ struct Beat
 				  bool accented = false);
 };
 
-struct Rythme
+struct Rhythm
 {
 	typedef std::vector<Beat> Beat_container;
 	typedef Beat_container::iterator Beat_iterator;
@@ -24,9 +24,9 @@ struct Rythme
 	double bpm = 60;
 	Beat_container beats;
 
-	Rythme() = default;
-	Rythme(const Rythme& other) = default;
-	explicit Rythme(double bpm);
+	Rhythm() = default;
+	Rhythm(const Rhythm& other) = default;
+	explicit Rhythm(double bpm);
 
 	void add_beat(const Beat& beat);
 	void add_beat(double length,
@@ -40,7 +40,7 @@ std::ostream& operator<<(std::ostream& os,
 						 const Beat& beat);
 
 std::ostream& operator<<(std::ostream& os,
-						 const Rythme& rythme);
+						 const Rhythm& rythme);
 
 
-#endif //RYTHME_VISUALIZATION_RYTHME_H
+#endif //RYTHME_VISUALIZATION_RHYTHM_H

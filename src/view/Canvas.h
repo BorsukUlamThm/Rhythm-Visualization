@@ -3,7 +3,7 @@
 
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
-#include "../model/Rythme.h"
+#include "../model/Rhythm.h"
 
 
 class Canvas
@@ -15,7 +15,7 @@ protected:
 	float size_y;
 
 public:
-	void display_rythme(const Rythme& rythme);
+	void display_rythme(const Rhythm& rythme);
 
 protected:
 	void open();

@@ -2,7 +2,7 @@
 #include <cmath>
 
 
-void Canvas::display_rythme(const Rythme& rythme)
+void Canvas::display_rythme(const Rhythm& rythme)
 {
 	open();
 	setup_view();
@@ -24,7 +24,7 @@ void Canvas::open()
 	settings.antialiasingLevel = 8;
 
 	window.create(sf::VideoMode::getDesktopMode(),
-				  "Rythme Visualization",
+				  "Rhythm Visualization",
 				  sf::Style::Default, settings);
 
 	size_x = float(window.getSize().x);
