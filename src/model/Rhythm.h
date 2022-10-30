@@ -23,6 +23,7 @@ struct Rhythm
 {
 	double bpm = 60;
 	std::vector<Note> notes;
+    unsigned nb_beats = 0;
 
 	Rhythm() = default;
 	Rhythm(const Rhythm& other) = default;
@@ -34,8 +35,6 @@ struct Rhythm
 
 	const Note& operator[](unsigned i) const;
 	Note& operator[](unsigned i);
-
-    unsigned nb_beats() const;
 };
 
 std::ostream& operator<<(std::ostream& os,
@@ -44,3 +43,4 @@ std::ostream& operator<<(std::ostream& os,
 std::ostream& operator<<(std::ostream& os,
 						 const Rhythm& rhythm);
 
+Rhythm load_rhythm(const std::string& file_name);

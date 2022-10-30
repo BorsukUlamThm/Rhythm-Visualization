@@ -102,7 +102,7 @@ void Canvas::draw_time_line(const Rhythm& rhythm)
     float theta = 2 * pi
                   * time_span.count()
                   * rhythm.bpm / 60
-                  / float(rhythm.nb_beats());
+                  / float(rhythm.nb_beats);
     float y = std::sin(theta);
     float x = std::cos(theta);
 
@@ -154,7 +154,7 @@ void Canvas::draw_ith_note(const Rhythm& rhythm,
     float pi = 2 * std::acos(0.0f);
     float theta = 2 * pi
                 * boost::rational_cast<float>(rhythm[i].timing)
-                / float(rhythm.nb_beats());
+                / float(rhythm.nb_beats);
     float x = std::cos(theta);
     float y = -std::sin(theta);
 
