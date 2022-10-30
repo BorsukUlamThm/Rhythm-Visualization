@@ -1,5 +1,4 @@
-#ifndef RYTHME_VISUALIZATION_CANVAS_H
-#define RYTHME_VISUALIZATION_CANVAS_H
+#pragma once
 
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
@@ -15,16 +14,15 @@ protected:
 	float size_y;
 
 public:
-	void display_rythme(const Rhythm& rythme);
+	void display_rhythm(const Rhythm& rhythm);
 
 protected:
 	void open();
 	void setup_view();
 	void handle_events();
 
-	void draw_rythme();
-	void display_center_circle();
+	void draw_rhythm();
+	void draw_center_circle();
+    void draw_beat(const Beat& beat);
 };
 
-
-#endif //RYTHME_VISUALIZATION_CANVAS_H

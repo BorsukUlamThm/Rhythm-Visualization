@@ -7,13 +7,13 @@ int main()
 {
 	Beat beat1(1);
 
-	Rhythm rythme;
-	rythme.add_beat(beat1);
-	rythme.add_beat(2);
-	rythme.add_beat(4, true);
+	Rhythm rhythm;
+	rhythm.add_beat(beat1);
+	rhythm.add_beat(2);
+	rhythm.add_beat(4, true);
 
 	Canvas canvas;
-	canvas.display_rythme(rythme);
+    canvas.display_rhythm(rhythm);
 
 	return 0;
 }

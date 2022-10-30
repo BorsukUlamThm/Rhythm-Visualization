@@ -2,14 +2,14 @@
 #include <cmath>
 
 
-void Canvas::display_rythme(const Rhythm& rythme)
+void Canvas::display_rhythm(const Rhythm& rhythm)
 {
 	open();
 	setup_view();
 	while (window.isOpen())
 	{
 		handle_events();
-		draw_rythme();
+		draw_rhythm();
 		window.display();
 	}
 }
@@ -82,13 +82,13 @@ void Canvas::handle_events()
 	}
 }
 
-void Canvas::draw_rythme()
+void Canvas::draw_rhythm()
 {
 	window.clear(sf::Color::White);
-	display_center_circle();
+    draw_center_circle();
 }
 
-void Canvas::display_center_circle()
+void Canvas::draw_center_circle()
 {
 	unsigned nb_vertices = 128;
 	float thickness = 10 * view.getSize().x / size_x;
@@ -122,4 +122,9 @@ void Canvas::display_center_circle()
 		shape[i].color = sf::Color::Black;
 	}
 	window.draw(shape);
+}
+
+void Canvas::draw_beat(const Beat &beat)
+{
+
 }
