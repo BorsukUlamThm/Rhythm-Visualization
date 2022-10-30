@@ -9,7 +9,7 @@ void Canvas::display_rhythm(const Rhythm& rhythm)
 	while (window.isOpen())
 	{
 		handle_events();
-		draw_rhythm();
+		draw_rhythm(rhythm);
 		window.display();
 	}
 }
@@ -82,49 +82,52 @@ void Canvas::handle_events()
 	}
 }
 
-void Canvas::draw_rhythm()
+void Canvas::draw_rhythm(const Rhythm& rhythm)
 {
 	window.clear(sf::Color::White);
     draw_center_circle();
+    for(unsigned i = 0; i < rhythm.notes.size(); ++i)
+    {
+        draw_ith_note(rhythm, i);
+    }
 }
 
 void Canvas::draw_center_circle()
 {
-	unsigned nb_vertices = 128;
-	float thickness = 10 * view.getSize().x / size_x;
-	sf::VertexArray shape(sf::TriangleStrip, 2 * (nb_vertices + 1));
-	auto pi = 2 * float(std::acos(0));
-	float angle_step = 2 * pi / float(nb_vertices);
+    float ratio = view.getSize().x / size_x;
+    float thickness = 20 * ratio;
+    float R = 1 + thickness / 2;
+    float r = 1 - thickness / 2;
+    unsigned nb_points = 64;
 
-	float theta = 0;
-	for (unsigned i = 1; i < nb_vertices; ++i)
-	{
-		float x = (1 - thickness / 2) * std::cos(theta);
-		float y = (1 - thickness / 2) * std::sin(theta);
-		shape[2 * i].position = sf::Vector2f(x, y);
+    sf::CircleShape ext_disk(R, nb_points);
+    ext_disk.move(-R, -R);
+    ext_disk.setFillColor(sf::Color::Black);
 
-		x = (1 + thickness / 2) * std::cos(theta);
-		y = (1 + thickness / 2) * std::sin(theta);
-		shape[2 * i + 1].position = sf::Vector2f(x, y);
+    sf::CircleShape int_disk(r, nb_points);
+    int_disk.move(-r, -r);
+    int_disk.setFillColor(sf::Color::White);
 
-		theta += angle_step;
-	}
-	float x = 1 - thickness / 2;
-	float y = 0;
-	shape[0].position = sf::Vector2f(x, y);
-	shape[2 * nb_vertices].position = sf::Vector2f(x, y);
-	x = 1 + thickness / 2;
-	shape[1].position = sf::Vector2f(x, y);
-	shape[2 * nb_vertices + 1].position = sf::Vector2f(x, y);
-
-	for (unsigned i = 0; i < shape.getVertexCount(); ++i)
-	{
-		shape[i].color = sf::Color::Black;
-	}
-	window.draw(shape);
+    window.draw(ext_disk);
+    window.draw(int_disk);
 }
 
-void Canvas::draw_beat(const Beat &beat)
+void Canvas::draw_ith_note(const Rhythm& rhythm,
+                           unsigned i)
 {
+    float ratio = view.getSize().x / size_x;
+    float radius = 30 * ratio;
 
+    float pi = 2 * std::acos(0.0f);
+    float theta = 2 * pi
+                * boost::rational_cast<float>(rhythm[i].timing)
+                / float(rhythm.nb_beats());
+    float x = std::cos(theta);
+    float y = -std::sin(theta);
+
+    sf::CircleShape disk(radius);
+    disk.move(x - radius, y - radius);
+    disk.setFillColor(rhythm[i].accented ? sf::Color::Red : sf::Color::Blue);
+
+    window.draw(disk);
 }

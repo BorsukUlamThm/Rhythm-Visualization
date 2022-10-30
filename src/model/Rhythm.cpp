@@ -1,8 +1,8 @@
 #include "Rhythm.h"
 
 
-Beat::Beat(double timing,
-		   bool accented) :
+Note::Note(Time_t timing,
+           bool accented) :
         timing(timing),
         accented(accented)
 {}
@@ -11,32 +11,39 @@ Rhythm::Rhythm(double bpm) :
 		bpm(bpm)
 {}
 
-void Rhythm::add_beat(const Beat& beat)
+void Rhythm::add_note(const Note& note)
 {
-	beats.push_back(beat);
+	notes.push_back(note);
 }
 
-void Rhythm::add_beat(double timing,
+void Rhythm::add_note(Time_t timing,
                       bool accented)
 {
-	beats.emplace_back(timing, accented);
+	notes.emplace_back(timing, accented);
 }
 
-const Beat& Rhythm::operator[](unsigned i) const
+const Note& Rhythm::operator[](unsigned i) const
 {
-	return beats[i];
+	return notes[i];
 }
 
-Beat& Rhythm::operator[](unsigned i)
+Note& Rhythm::operator[](unsigned i)
 {
-	return beats[i];
+	return notes[i];
+}
+
+unsigned Rhythm::nb_beats() const
+{
+    integer n = notes.back().timing.numerator();
+    integer d = notes.back().timing.denominator();
+    return 1 + n / d;
 }
 
 std::ostream& operator<<(std::ostream& os,
-						 const Beat& beat)
+						 const Note& note)
 {
-	std::cout << beat.timing
-			  << (beat.accented ? " (accented)" : "");
+	std::cout << note.timing
+              << (note.accented ? " (accented)" : "");
 
     return os;
 }
@@ -45,9 +52,9 @@ std::ostream& operator<<(std::ostream& os,
 						 const Rhythm& rhythm)
 {
 	std::cout << "bpm : " << rhythm.bpm << std::endl;
-	for(auto& beat : rhythm.beats)
+	for(auto& note : rhythm.notes)
 	{
-		std::cout << beat << std::endl;
+		std::cout << note << std::endl;
 	}
 
     return os;

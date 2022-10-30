@@ -2,40 +2,44 @@
 
 #include <vector>
 #include <iostream>
+#include <boost/rational.hpp>
 
 
-struct Beat
+typedef int integer;
+typedef boost::rational<integer> Time_t;
+
+struct Note
 {
-	double timing = 0; // timing/bpm will be the time when the beat slaps
+	Time_t timing = 0; // timing/bpm will be the time when the note slaps
 	bool accented = false;
 
-	Beat() = default;
-	Beat(const Beat& other) = default;
-	explicit Beat(double timing,
-				  bool accented = false);
+	Note() = default;
+	Note(const Note& other) = default;
+	explicit Note(Time_t timing,
+                  bool accented = false);
 };
 
 struct Rhythm
 {
-	typedef std::vector<Beat> Beat_container;
-
 	double bpm = 60;
-	Beat_container beats;
+	std::vector<Note> notes;
 
 	Rhythm() = default;
 	Rhythm(const Rhythm& other) = default;
 	explicit Rhythm(double bpm);
 
-	void add_beat(const Beat& beat);
-	void add_beat(double timing,
-				  bool accented = false);
+	void add_note(const Note& note);
+	void add_note(Time_t timing,
+                  bool accented = false);
 
-	const Beat& operator[](unsigned i) const;
-	Beat& operator[](unsigned i);
+	const Note& operator[](unsigned i) const;
+	Note& operator[](unsigned i);
+
+    unsigned nb_beats() const;
 };
 
 std::ostream& operator<<(std::ostream& os,
-						 const Beat& beat);
+						 const Note& note);
 
 std::ostream& operator<<(std::ostream& os,
 						 const Rhythm& rhythm);

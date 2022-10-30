@@ -21,8 +21,9 @@ protected:
 	void setup_view();
 	void handle_events();
 
-	void draw_rhythm();
+	void draw_rhythm(const Rhythm& rhythm);
 	void draw_center_circle();
-    void draw_beat(const Beat& beat);
+    void draw_ith_note(const Rhythm& rhythm,
+                       unsigned i);
 };
 
