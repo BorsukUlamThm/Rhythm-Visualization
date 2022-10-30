@@ -115,6 +115,7 @@ void Canvas::draw_rhythm(const Rhythm& rhythm)
 	window.clear(sf::Color::White);
     draw_center_circle();
     draw_time_line(rhythm);
+    draw_beat_lines(rhythm);
     draw_highlighted_note(rhythm);
 
     for(unsigned i = 0; i < rhythm.notes.size(); ++i)
@@ -130,6 +131,26 @@ float Canvas::make_time_line_angle(const Rhythm& rhythm)
          * timer.read()
          * rhythm.bpm / 60
          / float(rhythm.nb_beats);
+}
+
+void Canvas::draw_center_circle()
+{
+    float ratio = view.getSize().x / size_x;
+    float thickness = 20 * ratio;
+    float R = 1 + thickness / 2;
+    float r = 1 - thickness / 2;
+    unsigned nb_points = 64;
+
+    sf::CircleShape ext_disk(R, nb_points);
+    ext_disk.move(-R, -R);
+    ext_disk.setFillColor(sf::Color::Black);
+
+    sf::CircleShape int_disk(r, nb_points);
+    int_disk.move(-r, -r);
+    int_disk.setFillColor(sf::Color::White);
+
+    window.draw(ext_disk);
+    window.draw(int_disk);
 }
 
 void Canvas::draw_time_line(const Rhythm& rhythm)
@@ -159,24 +180,26 @@ void Canvas::draw_time_line(const Rhythm& rhythm)
     window.draw(shape);
 }
 
-void Canvas::draw_center_circle()
+void Canvas::draw_beat_lines(const Rhythm &rhythm)
 {
-    float ratio = view.getSize().x / size_x;
-    float thickness = 20 * ratio;
-    float R = 1 + thickness / 2;
-    float r = 1 - thickness / 2;
-    unsigned nb_points = 64;
+    float pi = 2 * std::acos(0.0f);
 
-    sf::CircleShape ext_disk(R, nb_points);
-    ext_disk.move(-R, -R);
-    ext_disk.setFillColor(sf::Color::Black);
+    for(unsigned i = 0; i < rhythm.nb_beats; ++i)
+    {
+        float theta = float(i) * 2 * pi / float(rhythm.nb_beats);
+        theta = pi / 2 - theta;
+        float y = std::sin(theta);
+        float x = std::cos(theta);
 
-    sf::CircleShape int_disk(r, nb_points);
-    int_disk.move(-r, -r);
-    int_disk.setFillColor(sf::Color::White);
+        sf::VertexArray shape(sf::LineStrip, 2);
+        shape[0].position = sf::Vector2f(0,0);
+        shape[1].position = sf::Vector2f(x,-y);
 
-    window.draw(ext_disk);
-    window.draw(int_disk);
+        shape[0].color = sf::Color::Black;
+        shape[1].color = sf::Color::Black;
+
+        window.draw(shape);
+    }
 }
 
 void Canvas::draw_highlighted_note(const Rhythm &rhythm)

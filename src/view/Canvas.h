@@ -26,8 +26,9 @@ protected:
     void handle_key_pressed_event(const sf::Event& event);
 
 	void draw_rhythm(const Rhythm& rhythm);
-    void draw_time_line(const Rhythm& rhythm);
     void draw_center_circle();
+    void draw_time_line(const Rhythm& rhythm);
+    void draw_beat_lines(const Rhythm& rhythm);
     void draw_highlighted_note(const Rhythm& rhythm);
     void draw_ith_note(const Rhythm& rhythm,
                        unsigned i);
