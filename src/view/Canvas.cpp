@@ -115,19 +115,28 @@ void Canvas::draw_rhythm(const Rhythm& rhythm)
 	window.clear(sf::Color::White);
     draw_center_circle();
     draw_time_line(rhythm);
+    draw_highlighted_note(rhythm);
+
     for(unsigned i = 0; i < rhythm.notes.size(); ++i)
     {
         draw_ith_note(rhythm, i);
     }
 }
 
+float Canvas::make_time_line_angle(const Rhythm& rhythm)
+{
+    float pi = 2 * std::acos(0.0f);
+    return 2 * pi
+         * timer.read()
+         * rhythm.bpm / 60
+         / float(rhythm.nb_beats);
+}
+
 void Canvas::draw_time_line(const Rhythm& rhythm)
 {
     float pi = 2 * std::acos(0.0f);
-    float theta = 2 * pi
-                  * timer.read()
-                  * rhythm.bpm / 60
-                  / float(rhythm.nb_beats);
+    float theta = make_time_line_angle(rhythm);
+    theta = pi / 2 - theta;
     float y = std::sin(theta);
     float x = std::cos(theta);
 
@@ -170,6 +179,45 @@ void Canvas::draw_center_circle()
     window.draw(int_disk);
 }
 
+void Canvas::draw_highlighted_note(const Rhythm &rhythm)
+{
+    float theta0 = make_time_line_angle(rhythm);
+    float pi = 2 * std::acos(0.0f);
+    while (theta0 >= 2 * pi)
+    { theta0 -= 2 * pi; }
+
+    unsigned i = 0;
+    while (make_ith_note_angle(rhythm, i) < theta0)
+    {
+        ++i;
+    }
+    if (i > 0)
+    { --i; }
+
+    float ratio = view.getSize().x / size_x;
+    float radius = 40 * ratio;
+
+    float theta = make_ith_note_angle(rhythm, i);
+    theta = pi/2 - theta;
+    float x = std::cos(theta);
+    float y = -std::sin(theta);
+
+    sf::CircleShape disk(radius);
+    disk.move(x - radius, y - radius);
+    disk.setFillColor(sf::Color::Green);
+
+    window.draw(disk);
+}
+
+float Canvas::make_ith_note_angle(const Rhythm &rhythm,
+                                 unsigned i)
+{
+    float pi = 2 * std::acos(0.0f);
+    return 2 * pi
+         * boost::rational_cast<float>(rhythm[i].timing)
+         / float(rhythm.nb_beats);
+}
+
 void Canvas::draw_ith_note(const Rhythm& rhythm,
                            unsigned i)
 {
@@ -177,9 +225,8 @@ void Canvas::draw_ith_note(const Rhythm& rhythm,
     float radius = 30 * ratio;
 
     float pi = 2 * std::acos(0.0f);
-    float theta = 2 * pi
-                * boost::rational_cast<float>(rhythm[i].timing)
-                / float(rhythm.nb_beats);
+    float theta = make_ith_note_angle(rhythm, i);
+    theta = pi/2 - theta;
     float x = std::cos(theta);
     float y = -std::sin(theta);
 

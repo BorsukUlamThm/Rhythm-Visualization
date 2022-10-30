@@ -28,7 +28,12 @@ protected:
 	void draw_rhythm(const Rhythm& rhythm);
     void draw_time_line(const Rhythm& rhythm);
     void draw_center_circle();
+    void draw_highlighted_note(const Rhythm& rhythm);
     void draw_ith_note(const Rhythm& rhythm,
                        unsigned i);
+
+    float make_time_line_angle(const Rhythm& rhythm);
+    float make_ith_note_angle(const Rhythm& rhythm,
+                              unsigned i);
 };
 
