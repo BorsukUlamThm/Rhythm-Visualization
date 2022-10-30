@@ -17,7 +17,9 @@ add_executable(${exe_name}
         src/model/Rhythm.cpp
         src/model/Rhythm.h
         src/view/Canvas.cpp
-        src/view/Canvas.h)
+        src/view/Canvas.h
+        src/utils/Timer.cpp
+        src/utils/Timer.h)
 
 target_link_libraries(${exe_name} -lsfml-graphics -lsfml-window -lsfml-system)
 set_target_properties(${exe_name} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${bin})

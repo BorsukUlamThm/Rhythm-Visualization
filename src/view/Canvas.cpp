@@ -76,10 +76,38 @@ void Canvas::handle_events()
 				setup_view();
 				break;
 
+            case sf::Event::KeyPressed:
+                handle_key_pressed_event(event);
+                break;
+
 			default:
 				break;
 		}
 	}
+}
+
+void Canvas::handle_key_pressed_event(const sf::Event& event)
+{
+    switch (event.key.code)
+    {
+        case sf::Keyboard::Space:
+            timer.start_or_stop();
+            break;
+
+        case sf::Keyboard::Enter:
+            timer.stop();
+            timer.reset();
+            break;
+
+        case sf::Keyboard::Escape:
+        case sf::Keyboard::Q:
+            window.clear();
+            window.close();
+            break;
+
+        default:
+            break;
+    }
 }
 
 void Canvas::draw_rhythm(const Rhythm& rhythm)
@@ -95,12 +123,9 @@ void Canvas::draw_rhythm(const Rhythm& rhythm)
 
 void Canvas::draw_time_line(const Rhythm& rhythm)
 {
-    time_point now = clock::now();
-    duration time_span = std::chrono::duration_cast<duration>(now - start);
-
     float pi = 2 * std::acos(0.0f);
     float theta = 2 * pi
-                  * time_span.count()
+                  * timer.read()
                   * rhythm.bpm / 60
                   / float(rhythm.nb_beats);
     float y = std::sin(theta);
