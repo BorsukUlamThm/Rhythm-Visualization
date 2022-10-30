@@ -5,6 +5,10 @@
 
 int main()
 {
+    auto t = std::chrono::high_resolution_clock::now();
+
+
+
     Time_t half (1, 2);
     Time_t quarter (1, 4);
 

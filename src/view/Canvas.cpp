@@ -86,10 +86,43 @@ void Canvas::draw_rhythm(const Rhythm& rhythm)
 {
 	window.clear(sf::Color::White);
     draw_center_circle();
+    draw_time_line(rhythm);
     for(unsigned i = 0; i < rhythm.notes.size(); ++i)
     {
         draw_ith_note(rhythm, i);
     }
+}
+
+void Canvas::draw_time_line(const Rhythm& rhythm)
+{
+    time_point now = clock::now();
+    duration time_span = std::chrono::duration_cast<duration>(now - start);
+
+    float pi = 2 * std::acos(0.0f);
+    float theta = 2 * pi
+                  * time_span.count()
+                  * rhythm.bpm / 60
+                  / float(rhythm.nb_beats());
+    float y = std::sin(theta);
+    float x = std::cos(theta);
+
+    float ratio = view.getSize().x / size_x;
+    float thickness = 3 * ratio;
+    float x_thickness = thickness / 2 * std::cos(theta + pi / 2);
+    float y_thickness = thickness / 2 * std::sin(theta + pi / 2);
+
+    sf::VertexArray shape(sf::Quads, 4);
+    shape[0].position = sf::Vector2f(x_thickness,-y_thickness);
+    shape[1].position = sf::Vector2f(x + x_thickness,- y - y_thickness);
+    shape[2].position = sf::Vector2f(x - x_thickness,- y + y_thickness);
+    shape[3].position = sf::Vector2f(-x_thickness,y_thickness);
+
+    shape[0].color = sf::Color::Black;
+    shape[1].color = sf::Color::Black;
+    shape[2].color = sf::Color::Black;
+    shape[3].color = sf::Color::Black;
+
+    window.draw(shape);
 }
 
 void Canvas::draw_center_circle()
