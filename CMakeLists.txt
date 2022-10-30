@@ -11,7 +11,7 @@ file(MAKE_DIRECTORY ${data})
 
 
 # Executable
-set(exe_name rythme-visualization)
+set(exe_name rhythm-visualization)
 add_executable(${exe_name}
         src/main.cpp
         src/model/Rhythm.cpp
@@ -21,5 +21,5 @@ add_executable(${exe_name}
         src/utils/Timer.cpp
         src/utils/Timer.h)
 
-target_link_libraries(${exe_name} -lsfml-graphics -lsfml-window -lsfml-system)
+target_link_libraries(${exe_name} -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio)
 set_target_properties(${exe_name} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${bin})

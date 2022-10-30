@@ -3,12 +3,17 @@
 #include "view/Canvas.h"
 
 
-int main()
+void test1()
 {
     Rhythm rhythm = load_rhythm("test");
 
-	Canvas canvas;
+    Canvas canvas;
     canvas.display_rhythm(rhythm);
+}
 
-	return 0;
+int main()
+{
+    test1();
+
+    return 0;
 }
