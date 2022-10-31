@@ -91,8 +91,17 @@ Time_t read_time(const std::string& word)
     return {n, d};
 }
 
+void update_last_rhythm_nb_beats(std::vector<Rhythm>& rhythms,
+                                 Time_t& total_time)
+{
+    integer n = total_time.numerator();
+    integer d = total_time.denominator();
+    rhythms.back().nb_beats = n / d;
+    rhythms.back().nb_beats += (n % d == 0 ? 0 : 1);
+}
+
 void read_line(const std::string& line,
-               Rhythm& rhythm,
+               std::vector<Rhythm>& rhythms,
                Time_t& total_time)
 {
     if (line.empty())
@@ -104,37 +113,43 @@ void read_line(const std::string& line,
 
     if (words[0] == "bpm")
     {
-        rhythm.bpm = std::stoi(words[1]);
+        for(auto& rhythm : rhythms)
+        { rhythm.bpm = std::stoi(words[1]); }
+        return;
+    }
+
+    if(words[0] == "new")
+    {
+        update_last_rhythm_nb_beats(rhythms, total_time);
+        rhythms.emplace_back(rhythms.back().bpm);
+        total_time = 0;
         return;
     }
 
     Time_t t = read_time(words[0]);
     Note note(total_time);
     note.accented = (words.size() > 1 && words[1] == "A");
-    rhythm.add_note(note);
+    rhythms.back().add_note(note);
 
     total_time += t;
 }
 
-Rhythm load_rhythm(const std::string& file_name)
+std::vector<Rhythm> load_rhythms(const std::string& file_name)
 {
     std::string file_path = "../data/" + file_name;
     std::ifstream ifs(file_path);
     std::string line;
-    Rhythm rhythm;
+    std::vector<Rhythm> rhythms;
 
+    rhythms.emplace_back();
     Time_t total_time = 0;
 
     for (; !ifs.eof(); std::getline(ifs, line))
     {
-        read_line(line, rhythm, total_time);
+        read_line(line, rhythms, total_time);
     }
-    read_line(line, rhythm, total_time);
+    read_line(line, rhythms, total_time);
+    update_last_rhythm_nb_beats(rhythms, total_time);
 
-    integer n = total_time.numerator();
-    integer d = total_time.denominator();
-    rhythm.nb_beats = n / d;
-    rhythm.nb_beats += (n % d == 0 ? 0 : 1);
-
-    return rhythm;
+    return rhythms;
 }

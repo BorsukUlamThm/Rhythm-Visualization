@@ -43,4 +43,4 @@ std::ostream& operator<<(std::ostream& os,
 std::ostream& operator<<(std::ostream& os,
 						 const Rhythm& rhythm);
 
-Rhythm load_rhythm(const std::string& file_name);
+std::vector<Rhythm> load_rhythms(const std::string& file_name);
