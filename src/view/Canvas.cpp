@@ -8,19 +8,19 @@ Canvas::Canvas()
         std::cerr << "Couldn't load hit sound file";
 }
 
-void Canvas::display_rhythm(const Rhythm& rhythm)
+void Canvas::display_rhythm(const std::vector<Rhythm>& rhythms)
 {
 	open();
 	setup_view();
 	while (window.isOpen())
 	{
 		handle_events();
-        if (timer.read() * rhythm.bpm / 60 > rhythm.nb_beats)
+        if (timer.read() * rhythms[0].bpm / 60 > rhythms[0].nb_beats)
         {
            timer.reset();
         }
-        play_sounds(rhythm);
-        draw_rhythm(rhythm);
+        play_sounds(rhythms[0]);
+        draw_rhythms(rhythms);
         window.display();
 	}
 }
@@ -129,17 +129,20 @@ void Canvas::handle_key_pressed_event(const sf::Event& event)
     }
 }
 
-void Canvas::draw_rhythm(const Rhythm& rhythm)
+void Canvas::draw_rhythms(const std::vector<Rhythm>& rhythms)
 {
 	window.clear(sf::Color::White);
-    draw_center_circle();
-    draw_time_line(rhythm);
+    draw_center_circles(rhythms);
+    draw_time_line(rhythms[0]);
     //draw_beat_lines(rhythm);
-    draw_highlighted_note(rhythm);
+    draw_highlighted_notes(rhythms);
 
-    for(unsigned i = 0; i < rhythm.notes.size(); ++i)
+    for(unsigned i = 0; i < rhythms.size(); ++i)
     {
-        draw_ith_note(rhythm, i);
+        for(unsigned j = 0; j < rhythms[i].notes.size(); ++j)
+        {
+            draw_ijth_note(rhythms, i, j);
+        }
     }
 }
 
@@ -152,24 +155,26 @@ float Canvas::make_time_line_angle(const Rhythm& rhythm)
          / float(rhythm.nb_beats);
 }
 
-void Canvas::draw_center_circle()
+void Canvas::draw_center_circles(const std::vector<Rhythm>& rhythms)
 {
-    float ratio = view.getSize().x / size_x;
-    float thickness = 10 * ratio;
-    float R = 1 + thickness / 2;
-    float r = 1 - thickness / 2;
-    unsigned nb_points = 64;
+    for(unsigned i = 0; i < rhythms.size(); ++i)
+    {
+        float thickness = 0.03;
+        float R = (1 - float(i) / float(rhythms.size())) + thickness / 2;
+        float r = (1 - float(i) / float(rhythms.size())) - thickness / 2;
+        unsigned nb_points = 64;
 
-    sf::CircleShape ext_disk(R, nb_points);
-    ext_disk.move(-R, -R);
-    ext_disk.setFillColor(sf::Color::Black);
+        sf::CircleShape ext_disk(R, nb_points);
+        ext_disk.move(-R, -R);
+        ext_disk.setFillColor(sf::Color::Black);
 
-    sf::CircleShape int_disk(r, nb_points);
-    int_disk.move(-r, -r);
-    int_disk.setFillColor(sf::Color::White);
+        sf::CircleShape int_disk(r, nb_points);
+        int_disk.move(-r, -r);
+        int_disk.setFillColor(sf::Color::White);
 
-    window.draw(ext_disk);
-    window.draw(int_disk);
+        window.draw(ext_disk);
+        window.draw(int_disk);
+    }
 }
 
 void Canvas::draw_time_line(const Rhythm& rhythm)
@@ -221,32 +226,35 @@ void Canvas::draw_beat_lines(const Rhythm &rhythm)
     }
 }
 
-void Canvas::draw_highlighted_note(const Rhythm &rhythm)
+void Canvas::draw_highlighted_notes(const std::vector<Rhythm>& rhythms)
 {
-    float theta0 = make_time_line_angle(rhythm);
+    for (unsigned id = 0; id < rhythms.size(); ++id)
+    {
+        float theta0 = make_time_line_angle(rhythms[id]);
 
-    unsigned i = 0;
-    while (make_ith_note_angle(rhythm, i) < theta0)
-    { ++i; }
-    if (i > 0)
-    { --i; }
+        unsigned i = 0;
+        while (make_ith_note_angle(rhythms[id], i) < theta0)
+        { ++i; }
+        if (i > 0)
+        { --i; }
 
-    float scale = 1.2;
-    float radius = (rhythm[i].accented ?
-            big_circle_radius * scale :
-            small_circle_radius + (scale - 1) * big_circle_radius);
+        float scale = 1.2;
+        float radius = (rhythms[id][i].accented ?
+                        big_circle_radius * scale :
+                        small_circle_radius + (scale - 1) * big_circle_radius);
 
-    float pi = 2 * std::acos(0);
-    float theta = make_ith_note_angle(rhythm, i);
-    theta = pi/2 - theta;
-    float x = std::cos(theta);
-    float y = -std::sin(theta);
+        float pi = 2 * std::acos(0);
+        float theta = make_ith_note_angle(rhythms[id], i);
+        theta = pi/2 - theta;
+        float x = float(id + 1) / float(rhythms.size()) * std::cos(theta);
+        float y = -float(id + 1) / float(rhythms.size()) * std::sin(theta);
 
-    sf::CircleShape disk(radius);
-    disk.move(x - radius, y - radius);
-    disk.setFillColor(sf::Color::Green);
+        sf::CircleShape disk(radius);
+        disk.move(x - radius, y - radius);
+        disk.setFillColor(sf::Color::Green);
 
-    window.draw(disk);
+        window.draw(disk);
+    }
 }
 
 float Canvas::make_ith_note_angle(const Rhythm &rhythm,
@@ -258,21 +266,22 @@ float Canvas::make_ith_note_angle(const Rhythm &rhythm,
          / float(rhythm.nb_beats);
 }
 
-void Canvas::draw_ith_note(const Rhythm& rhythm,
-                           unsigned i)
+void Canvas::draw_ijth_note(const std::vector<Rhythm>& rhythms,
+                            unsigned i,
+                            unsigned j)
 {
-    float radius = (rhythm[i].accented ?
+    float radius = (rhythms[i][j].accented ?
             big_circle_radius : small_circle_radius);
 
     float pi = 2 * std::acos(0.0f);
-    float theta = make_ith_note_angle(rhythm, i);
+    float theta = make_ith_note_angle(rhythms[i], j);
     theta = pi/2 - theta;
-    float x = std::cos(theta);
-    float y = -std::sin(theta);
+    float x = float(i + 1) / float(rhythms.size()) * std::cos(theta);
+    float y = -float(i + 1) / float(rhythms.size()) * std::sin(theta);
 
     sf::CircleShape disk(radius);
     disk.move(x - radius, y - radius);
-    disk.setFillColor(rhythm[i].accented ? sf::Color::Red : sf::Color::Black);
+    disk.setFillColor(rhythms[i][j].accented ? sf::Color::Red : sf::Color::Black);
 
     window.draw(disk);
 }

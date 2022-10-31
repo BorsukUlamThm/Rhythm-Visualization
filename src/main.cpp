@@ -8,8 +8,7 @@ void test1()
     std::vector<Rhythm> rhythms = load_rhythms("test");
 
     Canvas canvas;
-    canvas.display_rhythm(rhythms[0]);
-    canvas.display_rhythm(rhythms[1]);
+    canvas.display_rhythm(rhythms);
 }
 
 int main()

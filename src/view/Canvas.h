@@ -33,7 +33,7 @@ protected:
 
 public:
     Canvas();
-	void display_rhythm(const Rhythm& rhythm);
+	void display_rhythm(const std::vector<Rhythm>& rhythms);
 
 protected:
 	void open();
@@ -41,13 +41,14 @@ protected:
 	void handle_events();
     void handle_key_pressed_event(const sf::Event& event);
 
-	void draw_rhythm(const Rhythm& rhythm);
-    void draw_center_circle();
+	void draw_rhythms(const std::vector<Rhythm>& rhythms);
+    void draw_center_circles(const std::vector<Rhythm>& rhythms);
     void draw_time_line(const Rhythm& rhythm);
     void draw_beat_lines(const Rhythm& rhythm);
-    void draw_highlighted_note(const Rhythm& rhythm);
-    void draw_ith_note(const Rhythm& rhythm,
-                       unsigned i);
+    void draw_highlighted_notes(const std::vector<Rhythm>& rhythms);
+    void draw_ijth_note(const std::vector<Rhythm>& rhythms,
+                        unsigned i,
+                        unsigned j);
 
     float make_time_line_angle(const Rhythm& rhythm);
     float make_ith_note_angle(const Rhythm& rhythm,

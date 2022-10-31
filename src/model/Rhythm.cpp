@@ -151,5 +151,16 @@ std::vector<Rhythm> load_rhythms(const std::string& file_name)
     read_line(line, rhythms, total_time);
     update_last_rhythm_nb_beats(rhythms, total_time);
 
+    unsigned max = rhythms[0].nb_beats;
+    for(auto& rhythm : rhythms)
+    {
+        if (rhythm.nb_beats > max)
+        { max = rhythm.nb_beats; }
+    }
+    for(auto& rhythm : rhythms)
+    {
+         rhythm.nb_beats = max;
+    }
+
     return rhythms;
 }
