@@ -10,6 +10,8 @@ Canvas::Canvas()
 
 void Canvas::display_rhythm(const std::vector<Rhythm>& rhythms)
 {
+    for(unsigned i = 0; i < rhythms.size(); ++i)
+    { next_note_indexes.push_back(0); }
 	open();
 	setup_view();
 	while (window.isOpen())
@@ -19,7 +21,7 @@ void Canvas::display_rhythm(const std::vector<Rhythm>& rhythms)
         {
            timer.reset();
         }
-        play_sounds(rhythms[0]);
+        play_sounds(rhythms);
         draw_rhythms(rhythms);
         window.display();
 	}
@@ -110,7 +112,8 @@ void Canvas::handle_key_pressed_event(const sf::Event& event)
             timer.stop();
             timer.reset();
             state = STOPPED;
-            next_note_index = 0;
+            for(unsigned & next_note_index : next_note_indexes)
+            { next_note_index = 0; }
             break;
 
         case sf::Keyboard::A:
@@ -286,30 +289,33 @@ void Canvas::draw_ijth_note(const std::vector<Rhythm>& rhythms,
     window.draw(disk);
 }
 
-void Canvas::play_sounds(const Rhythm& rhythm)
+void Canvas::play_sounds(const std::vector<Rhythm>& rhythms)
 {
     if (state == STOPPED)
     { return; }
 
-    double t = timer.read() * rhythm.bpm / 60.0f;
-
-    bool need_play_sound;
-    if (next_note_index == 0)
-    { need_play_sound = t < 0.01; }
-    else
+    double t = timer.read() * rhythms[0].bpm / 60.0f;
+    for(unsigned i = 0; i < rhythms.size(); ++i)
     {
-        need_play_sound = t >
-                boost::rational_cast<double>(rhythm[next_note_index].timing);
-    }
-
-    if (need_play_sound)
-    {
-        sound.setBuffer(hit_buffer);
-        sound.play();
-        next_note_index++;
-        if (next_note_index == rhythm.notes.size())
+        bool need_play_sound;
+        if (next_note_indexes[i] == 0)
+        { need_play_sound = t < 0.01; }
+        else
         {
-            next_note_index = 0;
+            need_play_sound = t >
+                              boost::rational_cast<double>(
+                                      rhythms[i][next_note_indexes[i]].timing);
+        }
+
+        if (need_play_sound)
+        {
+            sound.setBuffer(hit_buffer);
+            sound.play();
+            next_note_indexes[i]++;
+            if (next_note_indexes[i] == rhythms[i].notes.size())
+            {
+                next_note_indexes[i] = 0;
+            }
         }
     }
 }

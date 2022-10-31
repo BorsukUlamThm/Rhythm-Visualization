@@ -29,7 +29,7 @@ protected:
 
     sf::SoundBuffer hit_buffer;
     sf::Sound sound;
-    unsigned next_note_index = 0;
+    std::vector<unsigned> next_note_indexes;
 
 public:
     Canvas();
@@ -54,6 +54,6 @@ protected:
     float make_ith_note_angle(const Rhythm& rhythm,
                               unsigned i);
 
-    void play_sounds(const Rhythm& rhythm);
+    void play_sounds(const std::vector<Rhythm>& rhythms);
 };
 
