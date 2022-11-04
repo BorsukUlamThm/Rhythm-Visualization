@@ -5,10 +5,10 @@
 
 void test1()
 {
-	std::vector<Rhythm> rhythms = load_rhythms("test");
+	Rhythm_set rhythm_set = load_rhythms("test");
 
 	Canvas canvas;
-	canvas.display_rhythm(rhythms);
+	canvas.display_rhythm(rhythm_set);
 }
 
 int main()

@@ -33,7 +33,7 @@ protected:
 
 public:
 	Canvas();
-	void display_rhythm(const std::vector<Rhythm>& rhythms);
+	void display_rhythm(const Rhythm_set& rhythm_set);
 
 protected:
 	void open();
@@ -41,21 +41,22 @@ protected:
 	void handle_events();
 	void handle_key_pressed_event(const sf::Event& event);
 
-	void draw_rhythms(const std::vector<Rhythm>& rhythms);
-	void draw_center_circles(const std::vector<Rhythm>& rhythms);
-	void draw_time_line(const Rhythm& rhythm);
-	void draw_beat_lines(const Rhythm& rhythm);
-	void draw_polygons(const std::vector<Rhythm>& rhythms);
-	void draw_notes(const std::vector<Rhythm>& rhythms);
-	void draw_highlighted_notes(const std::vector<Rhythm>& rhythms);
-	void draw_ijth_note(const std::vector<Rhythm>& rhythms,
+	void draw_rhythms(const Rhythm_set& rhythm_set);
+	void draw_center_circles(const Rhythm_set& rhythm_set);
+	void draw_time_line(const Rhythm_set& rhythm_set);
+	void draw_beat_lines(const Rhythm_set& rhythm_set);
+	void draw_polygons(const Rhythm_set& rhythm_set);
+	void draw_notes(const Rhythm_set& rhythm_set);
+	void draw_highlighted_notes(const Rhythm_set& rhythm_set);
+	void draw_ijth_note(const Rhythm_set& rhythm_set,
 						unsigned i,
 						unsigned j);
 
-	float make_time_line_angle(const Rhythm& rhythm);
-	float make_ith_note_angle(const Rhythm& rhythm,
-							  unsigned i);
+	float make_time_line_angle(const Rhythm_set& rhythm_set);
+	float make_ijth_note_angle(const Rhythm_set& rhythm_set,
+							   unsigned i,
+							   unsigned j);
 
-	void play_sounds(const std::vector<Rhythm>& rhythms);
+	void play_sounds(const Rhythm_set& rhythms);
 };
 

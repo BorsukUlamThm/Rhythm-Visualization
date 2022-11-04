@@ -8,10 +8,6 @@ Note::Note(Time_t timing,
 		accented(accented)
 {}
 
-Rhythm::Rhythm(double bpm) :
-		bpm(bpm)
-{}
-
 void Rhythm::add_note(const Note& note)
 {
 	notes.push_back(note);
@@ -33,6 +29,25 @@ Note& Rhythm::operator[](unsigned i)
 	return notes[i];
 }
 
+Rhythm_set::Rhythm_set(double bpm) :
+		bpm(bpm)
+{}
+
+void Rhythm_set::new_rhythm()
+{ rhythms.emplace_back(); }
+
+Rhythm& Rhythm_set::back()
+{ return rhythms.back(); }
+
+const Rhythm& Rhythm_set::operator[](unsigned i) const
+{ return rhythms[i]; }
+
+Rhythm& Rhythm_set::operator[](unsigned i)
+{ return rhythms[i]; }
+
+unsigned Rhythm_set::size() const
+{ return rhythms.size(); }
+
 std::ostream& operator<<(std::ostream& os,
 						 const Note& note)
 {
@@ -45,7 +60,6 @@ std::ostream& operator<<(std::ostream& os,
 std::ostream& operator<<(std::ostream& os,
 						 const Rhythm& rhythm)
 {
-	std::cout << "bpm : " << rhythm.bpm << std::endl;
 	for (auto& note : rhythm.notes)
 	{
 		std::cout << note << std::endl;
@@ -91,17 +105,20 @@ Time_t read_time(const std::string& word)
 	return {n, d};
 }
 
-void update_last_rhythm_nb_beats(std::vector<Rhythm>& rhythms,
-								 Time_t& total_time)
+void update_nb_beats(Rhythm_set& rhythm_set,
+					 Time_t& total_time)
 {
 	integer n = total_time.numerator();
 	integer d = total_time.denominator();
-	rhythms.back().nb_beats = n / d;
-	rhythms.back().nb_beats += (n % d == 0 ? 0 : 1);
+	unsigned nb_nbeats = n / d;
+	nb_nbeats += (n % d == 0 ? 0 : 1);
+
+	if (nb_nbeats > rhythm_set.nb_beats)
+	{ rhythm_set.nb_beats = nb_nbeats; }
 }
 
 void read_line(const std::string& line,
-			   std::vector<Rhythm>& rhythms,
+			   Rhythm_set& rhythm_set,
 			   Time_t& total_time)
 {
 	if (line.empty())
@@ -113,60 +130,59 @@ void read_line(const std::string& line,
 
 	if (words[0] == "bpm")
 	{
-		for (auto& rhythm : rhythms)
-		{ rhythm.bpm = std::stoi(words[1]); }
+		rhythm_set.bpm = std::stoi(words[1]);
 		return;
 	}
 
 	if (words[0] == "new")
 	{
-		update_last_rhythm_nb_beats(rhythms, total_time);
-		rhythms.emplace_back(rhythms.back().bpm);
+		update_nb_beats(rhythm_set, total_time);
+		rhythm_set.new_rhythm();
 		total_time = 0;
 		return;
 	}
 
 	if (words[0] == "polygon")
 	{
-		rhythms.back().draw_polygon = true;
+		rhythm_set.back().draw_polygon = true;
 		return;
 	}
 
 	Time_t t = read_time(words[0]);
 	Note note(total_time);
 	note.accented = (words.size() > 1 && words[1] == "A");
-	rhythms.back().add_note(note);
+	rhythm_set.back().add_note(note);
 
 	total_time += t;
 }
 
-std::vector<Rhythm> load_rhythms(const std::string& file_name)
+Rhythm_set load_rhythms(const std::string& file_name)
 {
 	std::string file_path = "../data/" + file_name;
 	std::ifstream ifs(file_path);
 	std::string line;
-	std::vector<Rhythm> rhythms;
+	Rhythm_set rhythm_set;
 
-	rhythms.emplace_back();
+	rhythm_set.new_rhythm();
 	Time_t total_time = 0;
 
 	for (; !ifs.eof(); std::getline(ifs, line))
 	{
-		read_line(line, rhythms, total_time);
+		read_line(line, rhythm_set, total_time);
 	}
-	read_line(line, rhythms, total_time);
-	update_last_rhythm_nb_beats(rhythms, total_time);
+	read_line(line, rhythm_set, total_time);
+	update_nb_beats(rhythm_set, total_time);
 
-	unsigned max = rhythms[0].nb_beats;
-	for (auto& rhythm : rhythms)
-	{
-		if (rhythm.nb_beats > max)
-		{ max = rhythm.nb_beats; }
-	}
-	for (auto& rhythm : rhythms)
-	{
-		rhythm.nb_beats = max;
-	}
+//	unsigned max = rhythm_set.nb_beats;
+//	for (auto& rhythm : rhythm_set)
+//	{
+//		if (rhythm.nb_beats > max)
+//		{ max = rhythm.nb_beats; }
+//	}
+//	for (auto& rhythm : rhythm_set)
+//	{
+//		rhythm.nb_beats = max;
+//	}
 
-	return rhythms;
+	return rhythm_set;
 }

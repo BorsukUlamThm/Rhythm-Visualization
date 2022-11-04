@@ -21,15 +21,11 @@ struct Note
 
 struct Rhythm
 {
-	double bpm = 60;
 	std::vector<Note> notes;
-	unsigned nb_beats = 0;
-
 	bool draw_polygon = false;
 
 	Rhythm() = default;
 	Rhythm(const Rhythm& other) = default;
-	explicit Rhythm(double bpm);
 
 	void add_note(const Note& note);
 	void add_note(Time_t timing,
@@ -39,10 +35,29 @@ struct Rhythm
 	Note& operator[](unsigned i);
 };
 
+struct Rhythm_set
+{
+	double bpm = 60;
+	unsigned nb_beats = 0;
+
+	std::vector<Rhythm> rhythms;
+
+	Rhythm_set() = default;
+	explicit Rhythm_set(double bpm);
+
+	void new_rhythm();
+
+	Rhythm& back();
+	const Rhythm& operator[](unsigned i) const;
+	Rhythm& operator[](unsigned i);
+
+	unsigned size() const;
+};
+
 std::ostream& operator<<(std::ostream& os,
 						 const Note& note);
 
 std::ostream& operator<<(std::ostream& os,
 						 const Rhythm& rhythm);
 
-std::vector<Rhythm> load_rhythms(const std::string& file_name);
+Rhythm_set load_rhythms(const std::string& file_name);
