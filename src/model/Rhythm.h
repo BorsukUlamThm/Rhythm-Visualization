@@ -16,14 +16,16 @@ struct Note
 	Note() = default;
 	Note(const Note& other) = default;
 	explicit Note(Time_t timing,
-                  bool accented = false);
+				  bool accented = false);
 };
 
 struct Rhythm
 {
 	double bpm = 60;
 	std::vector<Note> notes;
-    unsigned nb_beats = 0;
+	unsigned nb_beats = 0;
+
+	bool draw_polygon = false;
 
 	Rhythm() = default;
 	Rhythm(const Rhythm& other) = default;
@@ -31,7 +33,7 @@ struct Rhythm
 
 	void add_note(const Note& note);
 	void add_note(Time_t timing,
-                  bool accented = false);
+				  bool accented = false);
 
 	const Note& operator[](unsigned i) const;
 	Note& operator[](unsigned i);

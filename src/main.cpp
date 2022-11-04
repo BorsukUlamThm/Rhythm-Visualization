@@ -5,15 +5,15 @@
 
 void test1()
 {
-    std::vector<Rhythm> rhythms = load_rhythms("test");
+	std::vector<Rhythm> rhythms = load_rhythms("test");
 
-    Canvas canvas;
-    canvas.display_rhythm(rhythms);
+	Canvas canvas;
+	canvas.display_rhythm(rhythms);
 }
 
 int main()
 {
-    test1();
+	test1();
 
-    return 0;
+	return 0;
 }
