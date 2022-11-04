@@ -4,11 +4,9 @@
 
 void Canvas::display_rhythm(const Rhythm_set& rhythm_set)
 {
-	for (unsigned i = 0; i < rhythm_set.size(); ++i)
-	{ next_note_indexes.push_back(0); }
-
 	hit_buffers = std::vector<sf::SoundBuffer>(rhythm_set.size());
 	hit_players = std::vector<sf::Sound>(rhythm_set.size());
+	next_note_indexes = std::vector<unsigned>(rhythm_set.size(), 0);
 
 	for (unsigned i = 0; i < rhythm_set.size(); ++i)
 	{
@@ -234,16 +232,27 @@ void Canvas::draw_polygons(const Rhythm_set& rhythm_set)
 		if (!rhythm_set[i].draw_polygon)
 		{ continue; }
 
+		std::vector<unsigned> accented_notes;
+		for (unsigned j = 0; j < rhythm_set[i].notes.size(); ++j)
+		{
+			if (rhythm_set[i][j].accented)
+			{
+				accented_notes.push_back(j);
+			}
+		}
+
 		float thickness = 0.02;
 		sf::VertexArray polygon(sf::TriangleStrip,
-								2 * (rhythm_set[i].notes.size() + 1));
+								2 * (accented_notes.size() + 1));
 		float r = float(i + 1) / float(rhythm_set.size())
 				  - thickness / 2;
 		float R = float(i + 1) / float(rhythm_set.size())
 				  + thickness / 2;
 
-		for (unsigned j = 0; j < rhythm_set[i].notes.size(); ++j)
+		for (unsigned id = 0; id < accented_notes.size(); ++id)
 		{
+			unsigned j = accented_notes[id];
+
 			float pi = 2 * std::acos(0.0f);
 			float theta = make_ijth_note_angle(rhythm_set, i, j);
 			theta = pi / 2 - theta;
@@ -253,13 +262,13 @@ void Canvas::draw_polygons(const Rhythm_set& rhythm_set)
 			float y_int = -r * std::sin(theta);
 			float y_ext = -R * std::sin(theta);
 
-			polygon[2 * j].position = sf::Vector2f(x_ext, y_ext);
-			polygon[2 * j + 1].position = sf::Vector2f(x_int, y_int);
-			polygon[2 * j].color = sf::Color::Magenta;
-			polygon[2 * j + 1].color = sf::Color::Magenta;
+			polygon[2 * id].position = sf::Vector2f(x_ext, y_ext);
+			polygon[2 * id + 1].position = sf::Vector2f(x_int, y_int);
+			polygon[2 * id].color = sf::Color::Magenta;
+			polygon[2 * id + 1].color = sf::Color::Magenta;
 		}
 		float pi = 2 * std::acos(0.0f);
-		float theta = make_ijth_note_angle(rhythm_set, i, 0);
+		float theta = make_ijth_note_angle(rhythm_set, i, accented_notes[0]);
 		theta = pi / 2 - theta;
 
 		float x_int = r * std::cos(theta);
@@ -267,12 +276,12 @@ void Canvas::draw_polygons(const Rhythm_set& rhythm_set)
 		float y_int = -r * std::sin(theta);
 		float y_ext = -R * std::sin(theta);
 
-		polygon[2 * rhythm_set[i].notes.size()].position =
+		polygon[2 * accented_notes.size()].position =
 				sf::Vector2f(x_ext, y_ext);
-		polygon[2 * rhythm_set[i].notes.size() + 1].position =
+		polygon[2 * accented_notes.size() + 1].position =
 				sf::Vector2f(x_int, y_int);
-		polygon[2 * rhythm_set[i].notes.size()].color = sf::Color::Magenta;
-		polygon[2 * rhythm_set[i].notes.size() + 1].color = sf::Color::Magenta;
+		polygon[2 * accented_notes.size()].color = sf::Color::Magenta;
+		polygon[2 * accented_notes.size() + 1].color = sf::Color::Magenta;
 
 		window.draw(polygon);
 	}
@@ -359,28 +368,22 @@ void Canvas::play_hit_sounds(const Rhythm_set& rhythm_set)
 	if (state == STOPPED)
 	{ return; }
 
-	double t = timer.read() * rhythm_set.bpm / 60.0f;
 	for (unsigned i = 0; i < rhythm_set.size(); ++i)
 	{
 		if (rhythm_set[i].hit_sound_file.empty())
 		{ continue; }
 
-		bool need_play_sound;
-		if (next_note_indexes[i] == 0)
-		{ need_play_sound = t < 0.01; }
-		else
+		for (unsigned j = 0; j < rhythm_set[i].notes.size(); ++j)
 		{
-			need_play_sound = t > boost::rational_cast<double>(
-					rhythm_set[i][next_note_indexes[i]].timing);
-		}
+			if (!rhythm_set[i][j].accented)
+			{ continue; }
 
-		if (need_play_sound)
-		{
-			hit_players[i].play();
-			next_note_indexes[i]++;
-			if (next_note_indexes[i] == rhythm_set[i].notes.size())
+			auto t = timer.read() * rhythm_set.bpm / 60.0f;
+			auto tj = boost::rational_cast<double>(rhythm_set[i][j].timing);
+			if (tj < t && t < tj + 0.008)
 			{
-				next_note_indexes[i] = 0;
+				hit_players[i].play();
+				break;
 			}
 		}
 	}
