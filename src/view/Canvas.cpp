@@ -223,6 +223,33 @@ void Canvas::draw_beat_lines(const Rhythm_set& rhythm_set)
 	}
 }
 
+void Canvas::draw_polygon_edge(const sf::Vector2f& v1,
+							   const sf::Vector2f& v2)
+{
+	float thickness = 0.04;
+
+	sf::Vector2f u = (v2 - v1);
+	float norm = std::sqrt(u.x * u.x + u.y * u.y);
+	u.x *= thickness / 2 / norm;
+	u.y *= thickness / 2 / norm;
+	float tmp = u.x;
+	u.x = -u.y;
+	u.y = tmp;
+
+	sf::VertexArray shape(sf::Quads, 4);
+	shape[0].position = v1 + u;
+	shape[1].position = v2 + u;
+	shape[2].position = v2 - u;
+	shape[3].position = v1 - u;
+
+	shape[0].color = sf::Color::Blue;
+	shape[1].color = sf::Color::Blue;
+	shape[2].color = sf::Color::Blue;
+	shape[3].color = sf::Color::Blue;
+
+	window.draw(shape);
+}
+
 void Canvas::draw_polygons(const Rhythm_set& rhythm_set)
 {
 	for (unsigned i = 0; i < rhythm_set.size(); ++i)
@@ -239,49 +266,23 @@ void Canvas::draw_polygons(const Rhythm_set& rhythm_set)
 			}
 		}
 
-		float thickness = 0.02;
-		sf::VertexArray polygon(sf::TriangleStrip,
-								2 * (accented_notes.size() + 1));
-		float r = float(i + 1) / float(rhythm_set.size())
-				  - thickness / 2;
-		float R = float(i + 1) / float(rhythm_set.size())
-				  + thickness / 2;
+		float r = float(i + 1) / float(rhythm_set.size());
 
 		for (unsigned id = 0; id < accented_notes.size(); ++id)
 		{
 			unsigned j = accented_notes[id];
+			unsigned k = accented_notes[(id + 1) % accented_notes.size()];
 
 			float pi = 2 * std::acos(0.0f);
-			float theta = make_ijth_note_angle(rhythm_set, i, j);
-			theta = pi / 2 - theta;
+			float theta1 = make_ijth_note_angle(rhythm_set, i, j);
+			theta1 = pi / 2 - theta1;
+			float theta2 = make_ijth_note_angle(rhythm_set, i, k);
+			theta2 = pi / 2 - theta2;
 
-			float x_int = r * std::cos(theta);
-			float x_ext = R * std::cos(theta);
-			float y_int = -r * std::sin(theta);
-			float y_ext = -R * std::sin(theta);
-
-			polygon[2 * id].position = sf::Vector2f(x_ext, y_ext);
-			polygon[2 * id + 1].position = sf::Vector2f(x_int, y_int);
-			polygon[2 * id].color = sf::Color::Magenta;
-			polygon[2 * id + 1].color = sf::Color::Magenta;
+			sf::Vector2f v1(r * std::cos(theta1), -r * std::sin(theta1));
+			sf::Vector2f v2(r * std::cos(theta2), -r * std::sin(theta2));
+			draw_polygon_edge(v1, v2);
 		}
-		float pi = 2 * std::acos(0.0f);
-		float theta = make_ijth_note_angle(rhythm_set, i, accented_notes[0]);
-		theta = pi / 2 - theta;
-
-		float x_int = r * std::cos(theta);
-		float x_ext = R * std::cos(theta);
-		float y_int = -r * std::sin(theta);
-		float y_ext = -R * std::sin(theta);
-
-		polygon[2 * accented_notes.size()].position =
-				sf::Vector2f(x_ext, y_ext);
-		polygon[2 * accented_notes.size() + 1].position =
-				sf::Vector2f(x_int, y_int);
-		polygon[2 * accented_notes.size()].color = sf::Color::Magenta;
-		polygon[2 * accented_notes.size() + 1].color = sf::Color::Magenta;
-
-		window.draw(polygon);
 	}
 }
 
@@ -379,7 +380,8 @@ void Canvas::play_hit_sounds(const Rhythm_set& rhythm_set)
 				rhythm_set[i][next_note_indexes[i]].timing);
 		if (t > next)
 		{
-			hit_players[i].play();
+			if (rhythm_set[i][next_note_indexes[i]].accented)
+			{ hit_players[i].play(); }
 			next_note_indexes[i]++;
 		}
 	}

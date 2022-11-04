@@ -45,6 +45,8 @@ protected:
 	void draw_time_line(const Rhythm_set& rhythm_set);
 	void draw_beat_lines(const Rhythm_set& rhythm_set);
 	void draw_polygons(const Rhythm_set& rhythm_set);
+	void draw_polygon_edge(const sf::Vector2f& v1,
+						   const sf::Vector2f& v2);
 	void draw_notes(const Rhythm_set& rhythm_set);
 	void draw_highlighted_notes(const Rhythm_set& rhythm_set);
 	void draw_ijth_note(const Rhythm_set& rhythm_set,
