@@ -30,6 +30,7 @@ protected:
 	std::vector<sf::Sound> hit_players;
 	std::vector<unsigned> next_note_indexes;
 
+	bool background_music = false;
 	sf::Music music;
 
 public:

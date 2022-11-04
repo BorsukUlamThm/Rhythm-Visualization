@@ -29,10 +29,6 @@ Note& Rhythm::operator[](unsigned i)
 	return notes[i];
 }
 
-Rhythm_set::Rhythm_set(double bpm) :
-		bpm(bpm)
-{}
-
 void Rhythm_set::new_rhythm()
 { rhythms.emplace_back(); }
 

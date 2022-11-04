@@ -45,7 +45,6 @@ struct Rhythm_set
 	std::vector<Rhythm> rhythms;
 
 	Rhythm_set() = default;
-	explicit Rhythm_set(double bpm);
 
 	void new_rhythm();
 

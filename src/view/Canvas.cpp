@@ -18,7 +18,11 @@ void Canvas::display_rhythm(const Rhythm_set& rhythm_set)
 		}
 	}
 
-	music.openFromFile(sounds + rhythm_set.music_file);
+	if (!rhythm_set.music_file.empty())
+	{
+		music.openFromFile(sounds + rhythm_set.music_file);
+		background_music = true;
+	}
 
 	open();
 	setup_view();
@@ -109,20 +113,27 @@ void Canvas::handle_key_pressed_event(const sf::Event& event)
 	{
 		case sf::Keyboard::Space:
 			timer.start_or_stop();
-			if (state == RUNNING)
-			{ music.pause(); }
-			else
-			{ music.play(); }
+			if (background_music)
+			{
+				if (state == RUNNING)
+				{ music.pause(); }
+				else
+				{ music.play(); }
+			}
 			state = (state == RUNNING ? STOPPED : RUNNING);
 			break;
 
 		case sf::Keyboard::Enter:
 			timer.stop();
 			timer.reset();
-			music.stop();
-			state = STOPPED;
+
+			if (background_music)
+			{ music.stop(); }
+
 			for (unsigned& next_note_index : next_note_indexes)
 			{ next_note_index = 0; }
+
+			state = STOPPED;
 			break;
 
 		case sf::Keyboard::Escape:
