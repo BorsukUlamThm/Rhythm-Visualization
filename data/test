@@ -16,18 +16,12 @@ hit_sound box-kick_G#_major.wav
 polygon
 
 # les notes t'as compris
-1/2 A
-1/2
-1/2 A
-1/2
-1/2
-1/2 A
-1/2 A
-1/2
-1/2 A
-1/2
-1/2
-1/2
+1 A
+1 A
+1
+1
+1A
+1
 
 # hop un 2e rythme
 new
@@ -35,10 +29,8 @@ new
 hit_sound snare-low-one-shot_C_minor.wav
 
 1/2
-1/2
-1/2
-1/2 A
-1/2
+1
+1 A
 1/2
 1/2
 1/2

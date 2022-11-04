@@ -25,7 +25,11 @@ void Canvas::display_rhythm(const Rhythm_set& rhythm_set)
 	{
 		handle_events();
 		if (timer.read() * rhythm_set.bpm / 60 > rhythm_set.nb_beats)
-		{ timer.reset(); }
+		{
+			timer.reset();
+			next_note_indexes = std::vector<unsigned>(rhythm_set.size(), 0);
+		}
+
 		play_hit_sounds(rhythm_set);
 		draw_rhythms(rhythm_set);
 		window.display();
@@ -63,17 +67,11 @@ void Canvas::setup_view()
 	float y_length = (y_max - y_min);
 
 	if (window_format < figure_format)
-	{
-		view.setSize(x_length, x_length / window_format);
-	}
+	{ view.setSize(x_length, x_length / window_format); }
 	else
-	{
-		view.setSize(y_length * window_format, y_length);
-	}
+	{ view.setSize(y_length * window_format, y_length); }
 
-	float ratio = view.getSize().x / size_x;
 	view.setCenter((x_min + x_max) / 2, (y_min + y_max) / 2);
-
 	window.setView(view);
 }
 
@@ -373,18 +371,16 @@ void Canvas::play_hit_sounds(const Rhythm_set& rhythm_set)
 		if (rhythm_set[i].hit_sound_file.empty())
 		{ continue; }
 
-		for (unsigned j = 0; j < rhythm_set[i].notes.size(); ++j)
-		{
-			if (!rhythm_set[i][j].accented)
-			{ continue; }
+		if (next_note_indexes[i] == rhythm_set[i].notes.size())
+		{ continue; }
 
-			auto t = timer.read() * rhythm_set.bpm / 60.0f;
-			auto tj = boost::rational_cast<double>(rhythm_set[i][j].timing);
-			if (tj < t && t < tj + 0.008)
-			{
-				hit_players[i].play();
-				break;
-			}
+		auto t = timer.read() * rhythm_set.bpm / 60.0f;
+		auto next = boost::rational_cast<double>(
+				rhythm_set[i][next_note_indexes[i]].timing);
+		if (t > next)
+		{
+			hit_players[i].play();
+			next_note_indexes[i]++;
 		}
 	}
 }
