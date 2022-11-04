@@ -3,7 +3,7 @@
 # Tout ce qui est après des # est ignoré (comme en python)
 
 # le bpm de tes rythmes (si tu précise rien, y a tout qui casse)
-bpm 82
+bpm 164
 
 # la musique en fond
 music Opeth_-_Windowpane.wav
