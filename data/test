@@ -5,6 +5,9 @@
 # le bpm de tes rythmes (si tu précise rien, y a tout qui casse)
 bpm 82
 
+# la musique en fond
+music Opeth_-_Windowpane.wav
+
 # ensuite une suite de rythmes qui seront affichés sur différents cercles
 # ils sont séparés par des "new"
 # pour chaque rhythme tu peux préciser :

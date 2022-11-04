@@ -134,6 +134,12 @@ void read_line(const std::string& line,
 		return;
 	}
 
+	if (words[0] == "music")
+	{
+		rhythm_set.music_file = words[1];
+		return;
+	}
+
 	if (words[0] == "new")
 	{
 		update_nb_beats(rhythm_set, total_time);
@@ -178,17 +184,6 @@ Rhythm_set load_rhythms(const std::string& file_name)
 	}
 	read_line(line, rhythm_set, total_time);
 	update_nb_beats(rhythm_set, total_time);
-
-	//	unsigned max = rhythm_set.nb_beats;
-	//	for (auto& rhythm : rhythm_set)
-	//	{
-	//		if (rhythm.nb_beats > max)
-	//		{ max = rhythm.nb_beats; }
-	//	}
-	//	for (auto& rhythm : rhythm_set)
-	//	{
-	//		rhythm.nb_beats = max;
-	//	}
 
 	return rhythm_set;
 }

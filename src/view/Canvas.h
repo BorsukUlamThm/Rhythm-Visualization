@@ -30,6 +30,8 @@ protected:
 	std::vector<sf::Sound> hit_players;
 	std::vector<unsigned> next_note_indexes;
 
+	sf::Music music;
+
 public:
 	Canvas() = default;
 	void display_rhythm(const Rhythm_set& rhythm_set);

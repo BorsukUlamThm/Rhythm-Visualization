@@ -8,16 +8,17 @@ void Canvas::display_rhythm(const Rhythm_set& rhythm_set)
 	hit_players = std::vector<sf::Sound>(rhythm_set.size());
 	next_note_indexes = std::vector<unsigned>(rhythm_set.size(), 0);
 
+	std::string sounds = "../data/sounds/";
 	for (unsigned i = 0; i < rhythm_set.size(); ++i)
 	{
 		if (!rhythm_set[i].hit_sound_file.empty())
 		{
-			std::string sounds = "../data/sounds/";
 			hit_buffers[i].loadFromFile(sounds + rhythm_set[i].hit_sound_file);
 			hit_players[i].setBuffer(hit_buffers[i]);
 		}
 	}
 
+	music.openFromFile(sounds + rhythm_set.music_file);
 
 	open();
 	setup_view();
@@ -108,12 +109,17 @@ void Canvas::handle_key_pressed_event(const sf::Event& event)
 	{
 		case sf::Keyboard::Space:
 			timer.start_or_stop();
+			if (state == RUNNING)
+			{ music.pause(); }
+			else
+			{ music.play(); }
 			state = (state == RUNNING ? STOPPED : RUNNING);
 			break;
 
 		case sf::Keyboard::Enter:
 			timer.stop();
 			timer.reset();
+			music.stop();
 			state = STOPPED;
 			for (unsigned& next_note_index : next_note_indexes)
 			{ next_note_index = 0; }

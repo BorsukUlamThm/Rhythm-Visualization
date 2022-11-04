@@ -40,6 +40,7 @@ struct Rhythm_set
 {
 	double bpm = 60;
 	unsigned nb_beats = 0;
+	std::string music_file;
 
 	std::vector<Rhythm> rhythms;
 
