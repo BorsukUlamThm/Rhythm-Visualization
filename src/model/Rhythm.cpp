@@ -134,6 +134,12 @@ void read_line(const std::string& line,
 		return;
 	}
 
+	if (words[0] == "hit_sounds")
+	{
+		rhythm_set.hit_sounds = true;
+		return;
+	}
+
 	if (words[0] == "new")
 	{
 		update_nb_beats(rhythm_set, total_time);

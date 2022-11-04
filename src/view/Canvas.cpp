@@ -352,6 +352,9 @@ void Canvas::draw_ijth_note(const Rhythm_set& rhythm_set,
 
 void Canvas::play_sounds(const Rhythm_set& rhythm_set)
 {
+	if (!rhythm_set.hit_sounds)
+	{ return; }
+
 	if (state == STOPPED)
 	{ return; }
 
