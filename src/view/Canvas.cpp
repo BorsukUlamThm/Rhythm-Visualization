@@ -2,16 +2,25 @@
 #include <cmath>
 
 
-Canvas::Canvas()
-{
-	if (!hit_buffer.loadFromFile("../data/sounds/hit.wav"))
-		std::cerr << "Couldn't load hit sound file";
-}
-
 void Canvas::display_rhythm(const Rhythm_set& rhythm_set)
 {
 	for (unsigned i = 0; i < rhythm_set.size(); ++i)
 	{ next_note_indexes.push_back(0); }
+
+	hit_buffers = std::vector<sf::SoundBuffer>(rhythm_set.size());
+	hit_players = std::vector<sf::Sound>(rhythm_set.size());
+
+	for (unsigned i = 0; i < rhythm_set.size(); ++i)
+	{
+		if (!rhythm_set[i].hit_sound_file.empty())
+		{
+			std::string sounds = "../data/sounds/";
+			hit_buffers[i].loadFromFile(sounds + rhythm_set[i].hit_sound_file);
+			hit_players[i].setBuffer(hit_buffers[i]);
+		}
+	}
+
+
 	open();
 	setup_view();
 	while (window.isOpen())
@@ -19,7 +28,7 @@ void Canvas::display_rhythm(const Rhythm_set& rhythm_set)
 		handle_events();
 		if (timer.read() * rhythm_set.bpm / 60 > rhythm_set.nb_beats)
 		{ timer.reset(); }
-		play_sounds(rhythm_set);
+		play_hit_sounds(rhythm_set);
 		draw_rhythms(rhythm_set);
 		window.display();
 	}
@@ -112,11 +121,6 @@ void Canvas::handle_key_pressed_event(const sf::Event& event)
 			state = STOPPED;
 			for (unsigned& next_note_index : next_note_indexes)
 			{ next_note_index = 0; }
-			break;
-
-		case sf::Keyboard::A:
-			sound.setBuffer(hit_buffer);
-			sound.play();
 			break;
 
 		case sf::Keyboard::Escape:
@@ -350,17 +354,17 @@ void Canvas::draw_ijth_note(const Rhythm_set& rhythm_set,
 	window.draw(disk);
 }
 
-void Canvas::play_sounds(const Rhythm_set& rhythm_set)
+void Canvas::play_hit_sounds(const Rhythm_set& rhythm_set)
 {
-	if (!rhythm_set.hit_sounds)
-	{ return; }
-
 	if (state == STOPPED)
 	{ return; }
 
 	double t = timer.read() * rhythm_set.bpm / 60.0f;
 	for (unsigned i = 0; i < rhythm_set.size(); ++i)
 	{
+		if (rhythm_set[i].hit_sound_file.empty())
+		{ continue; }
+
 		bool need_play_sound;
 		if (next_note_indexes[i] == 0)
 		{ need_play_sound = t < 0.01; }
@@ -372,8 +376,7 @@ void Canvas::play_sounds(const Rhythm_set& rhythm_set)
 
 		if (need_play_sound)
 		{
-			sound.setBuffer(hit_buffer);
-			sound.play();
+			hit_players[i].play();
 			next_note_indexes[i]++;
 			if (next_note_indexes[i] == rhythm_set[i].notes.size())
 			{

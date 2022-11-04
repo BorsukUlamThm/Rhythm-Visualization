@@ -23,6 +23,7 @@ struct Rhythm
 {
 	std::vector<Note> notes;
 	bool draw_polygon = false;
+	std::string hit_sound_file;
 
 	Rhythm() = default;
 	Rhythm(const Rhythm& other) = default;
@@ -39,7 +40,6 @@ struct Rhythm_set
 {
 	double bpm = 60;
 	unsigned nb_beats = 0;
-	bool hit_sounds;
 
 	std::vector<Rhythm> rhythms;
 

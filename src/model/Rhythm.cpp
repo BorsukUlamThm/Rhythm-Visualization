@@ -134,12 +134,6 @@ void read_line(const std::string& line,
 		return;
 	}
 
-	if (words[0] == "hit_sounds")
-	{
-		rhythm_set.hit_sounds = true;
-		return;
-	}
-
 	if (words[0] == "new")
 	{
 		update_nb_beats(rhythm_set, total_time);
@@ -151,6 +145,12 @@ void read_line(const std::string& line,
 	if (words[0] == "polygon")
 	{
 		rhythm_set.back().draw_polygon = true;
+		return;
+	}
+
+	if (words[0] == "hit_sound")
+	{
+		rhythm_set.back().hit_sound_file = words[1];
 		return;
 	}
 
@@ -179,16 +179,16 @@ Rhythm_set load_rhythms(const std::string& file_name)
 	read_line(line, rhythm_set, total_time);
 	update_nb_beats(rhythm_set, total_time);
 
-//	unsigned max = rhythm_set.nb_beats;
-//	for (auto& rhythm : rhythm_set)
-//	{
-//		if (rhythm.nb_beats > max)
-//		{ max = rhythm.nb_beats; }
-//	}
-//	for (auto& rhythm : rhythm_set)
-//	{
-//		rhythm.nb_beats = max;
-//	}
+	//	unsigned max = rhythm_set.nb_beats;
+	//	for (auto& rhythm : rhythm_set)
+	//	{
+	//		if (rhythm.nb_beats > max)
+	//		{ max = rhythm.nb_beats; }
+	//	}
+	//	for (auto& rhythm : rhythm_set)
+	//	{
+	//		rhythm.nb_beats = max;
+	//	}
 
 	return rhythm_set;
 }

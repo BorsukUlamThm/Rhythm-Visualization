@@ -24,15 +24,14 @@ protected:
 		STOPPED
 	};
 	State state = STOPPED;
-
 	Timer timer;
 
-	sf::SoundBuffer hit_buffer;
-	sf::Sound sound;
+	std::vector<sf::SoundBuffer> hit_buffers;
+	std::vector<sf::Sound> hit_players;
 	std::vector<unsigned> next_note_indexes;
 
 public:
-	Canvas();
+	Canvas() = default;
 	void display_rhythm(const Rhythm_set& rhythm_set);
 
 protected:
@@ -57,6 +56,6 @@ protected:
 							   unsigned i,
 							   unsigned j);
 
-	void play_sounds(const Rhythm_set& rhythms);
+	void play_hit_sounds(const Rhythm_set& rhythm_set);
 };
 

@@ -1,5 +1,6 @@
 bpm 60
-#hit_sounds
+
+hit_sound box-kick_G#_major.wav
 
 1 A
 1 A
@@ -10,6 +11,8 @@ new
 
 polygon
 
+hit_sound snare-low-one-shot_C_minor.wav
+
 1/2
 1 A
 1 A
@@ -17,6 +20,8 @@ polygon
 1/2 A
 
 new
+
+hit_sound bright-snap_C_minor.wav
 
 2/3
 2/3
